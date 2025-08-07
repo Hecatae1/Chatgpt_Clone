@@ -9,7 +9,7 @@ const createElement = (html, className) => {
     const chatDiv = document.createElement("div");
     chatDiv.classList.add("chat", className);
     chatDiv.innerHTML = html;
-    return chatDiv;
+    return chatDiv; 
 }
 
 const getChatResponse = async(incomingChatDiv) => {
