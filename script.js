@@ -3,7 +3,7 @@ const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 
 let userText = null;
-const API_KEY = ""; // Replace with your actual OpenAI API key
+const API_KEY = ""; // Replace with your actual OpenAI API key 
 //const APky = process.env.OPENAI_API_KEY || API_KEY; // Use environment variable or fallback to a hardcoded key
 
 const createElement = (html, className) => {
