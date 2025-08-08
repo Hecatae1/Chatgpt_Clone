@@ -3,7 +3,8 @@ const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 
 let userText = null;
-const APIkY = "";
+const API_KEY = ""; // Replace with your actual OpenAI API key
+//const APky = process.env.OPENAI_API_KEY || API_KEY; // Use environment variable or fallback to a hardcoded key
 
 const createElement = (html, className) => {
     const chatDiv = document.createElement("div");
@@ -22,7 +23,7 @@ const requestOptions = {
     method: "POST",
     headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${APky}` // Ensure you have your API key set in your environment variables
+            "Authorization": `Bearer ${API_KEY}` // Ensure you have your API key set in your environment variables
         },
     
     body: JSON.stringify({
@@ -51,7 +52,12 @@ const requestOptions = {
     incomingChatDiv.querySelector(".typing-animation").remove(); // remove the typing animation
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement); // append the response text to the chat details
 }
-
+const copyResponse = (copyBtn) => {
+    const responseTextElement = copyBtn.parentElement.querySelector("p");// get the previous sibling element which is the response text
+    navigator.clipboard.writeText(responseTextElement.textContent); // copy the response text to clipboard
+    copyBtn.textContent = "check"; // change the icon to check after copying
+    setTimeout(() =>  copyBtn.textContent = "content_copy", 1000); // change it back to content_copy after 2 seconds
+}
 
 const showTypingAnimation = () => {
     const html =`<div class = "chat-content">
@@ -63,7 +69,7 @@ const showTypingAnimation = () => {
                             <div class = "typing-dot" style="--delay: 0.4s"></div>
                         </div>
                     </div>    
-                    <span class="material-symbols-rounded">content_copy</span>
+                    <span onclick= "copyResponse(this)"  class="material-symbols-rounded">content_copy</span>
                 </div>`; 
     // create an incoming chat div with the typing animation and append it to the chat container  
     const incomingChatDiv = createElement(html, "incoming");
