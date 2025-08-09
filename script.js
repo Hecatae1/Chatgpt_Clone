@@ -1,10 +1,11 @@
+
+
 const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 
 let userText = null;
-const API_KEY = ""; // Replace with your actual OpenAI API key 
-//const APky = process.env.OPENAI_API_KEY || API_KEY; // Use environment variable or fallback to a hardcoded key
+ // Use environment variable or fallback to a hardcoded key
 
 const createElement = (html, className) => {
     const chatDiv = document.createElement("div");
@@ -14,7 +15,7 @@ const createElement = (html, className) => {
 }
 
 const getChatResponse = async(incomingChatDiv) => {
-    const API_URL = "https://api.openai.com/v1/chat/completions";
+    const API_URL = "http://localhost:3000/api/chat";
     const pElement = document.createElement("p");
 
 
@@ -23,7 +24,7 @@ const requestOptions = {
     method: "POST",
     headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${API_KEY}` // Ensure you have your API key set in your environment variables
+           // "Authorization": `Bearer ${API_KEY}` // Ensure you have your API key set in your environment variables
         },
     
     body: JSON.stringify({
@@ -35,18 +36,26 @@ const requestOptions = {
             }
         ],
         max_tokens: 248,
-        temperature: 0.5, // creativity of the response
+        temperature: 0.4, // creativity of the response
         top_p: 1.0, // nucleus sampling
         n: 1,
         stop: null
     })
 
     }
-    try{
-        const response =await (await fetch(API_URL, requestOptions)).json();
-        pElement.textContent = response.choices[0].message.content.trim(); // get the first choice text
-    } catch (error) {
+    try {
+        const response = await fetch(API_URL, requestOptions);
+        const data = await response.json();
+
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            pElement.textContent = data.error?.message || "Sorry, something went wrong.";
+        } else {
+            pElement.textContent = data.choices[0].message.content.trim();
+        }
+    } 
+    catch (error) {
         console.log(error);
+        pElement.textContent = "Sorry, something went wrong.";
     }
 
     incomingChatDiv.querySelector(".typing-animation").remove(); // remove the typing animation
