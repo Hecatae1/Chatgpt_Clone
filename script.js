@@ -46,7 +46,7 @@ const requestOptions = {
         },
     
     body: JSON.stringify({
-        model: "gpt-4o",  // or "gpt-4" / "gpt-4o"
+        model: "gpt-4",  // or "gpt-4" / "gpt-4o"
         messages: [
             {
                 role: "user",
@@ -62,6 +62,8 @@ const requestOptions = {
 
     }
     try {
+        console.log("Using API_URL:", API_URL);
+
         const response = await fetch(API_URL, requestOptions);
         const data = await response.json();
 
