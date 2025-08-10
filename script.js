@@ -64,7 +64,7 @@ const requestOptions = {
     try {
         console.log("Using API_URL:", API_URL);
 
-        const response = await fetch(API_URL, requestOptions);
+        const response = await fetch('https://chatgpt-clone-trrq.onrender.com/api/chat', requestOptions);
         const data = await response.json();
 
         if (!data.choices || !data.choices[0] || !data.choices[0].message) {
