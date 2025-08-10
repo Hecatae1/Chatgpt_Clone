@@ -34,7 +34,7 @@ const createElement = (html, className) => {
 }
 
 const getChatResponse = async(incomingChatDiv) => {
-    const API_URL = "http://localhost:3000/api/chat";
+    const API_URL = "https://chatgpt-clone-trrq.onrender.com/api/chat";
     const pElement = document.createElement("p");
 
 
