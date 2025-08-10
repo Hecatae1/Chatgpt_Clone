@@ -7,9 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/chat', async (req, res) => {
-  console.log("Received a request at /api/chat");
+app.get('/api/chat', (req, res) => {
   res.send("API is working! Send a POST request with JSON to chat with me.");
+});
+app.post('/api/chat', async (req, res) => {
+  console.log("Received a request at /api/chat");
+
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -30,4 +33,4 @@ app.get('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+app.listen(3000, () => console.log("Server running on port 3000"));
