@@ -1,14 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-//const fetch = require('node-fetch'); // Ensure you have node-fetch installed
+const fetch = require('node-fetch'); // Ensure you have node-fetch installed
 const cors = require('cors');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+const API_KEY = process.env.API_KEY; // Load your API key from environment variables
 console.log("API key loaded?", !!process.env.OPENAI_API_KEY);
-const port = process.env.PORT || 3000;
+const port = process.env.VITE_API_URL|| 3000;
 
 app.get('/api/chat', (req, res) => {
   res.send("API is working! Send a POST request with JSON to chat with me.");
@@ -17,7 +17,7 @@ app.post('/api/chat', async (req, res) => {
   console.log("Received a request at /api/chat");
     console.log("Incoming message:", req.body);
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

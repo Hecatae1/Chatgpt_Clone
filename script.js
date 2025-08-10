@@ -4,6 +4,7 @@ const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
 const deleteButton = document.querySelector("#delete-btn");
 
+
 let userText = null;
  // Use environment variable or fallback to a hardcoded key
 
@@ -42,7 +43,7 @@ const requestOptions = {
     method: "POST",
     headers: {
             "Content-Type": "application/json",
-           // "Authorization": `Bearer ${API_KEY}` // Ensure you have your API key set in your environment variables
+           
         },
     
     body: JSON.stringify({
