@@ -7,6 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+console.log("API key loaded?", !!process.env.OPENAI_API_KEY);
+
+
 app.get('/api/chat', (req, res) => {
   res.send("API is working! Send a POST request with JSON to chat with me.");
 });

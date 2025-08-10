@@ -72,7 +72,7 @@ const requestOptions = {
     } 
     catch (error) {
         console.log(error);
-        pElement.textContent = "Sorry, something went wrong.";
+        pElement.textContent = `Error: ${error.message}`;
     }
 
     incomingChatDiv.querySelector(".typing-animation").remove(); // remove the typing animation
