@@ -3,9 +3,28 @@
 const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
+const themeButton = document.querySelector("#theme-btn");
+const deleteButton = document.querySelector("#delete-btn");
 
 let userText = null;
  // Use environment variable or fallback to a hardcoded key
+
+const defaultText = `<div class = "default-text">
+                            <h1>ChatGPT Clone</h1>
+                            <p>Start a conversation and explore the power of AI.<br> Your Chat History will be shown here</p>
+                        </div>`;
+
+ const loadDataFromLocalStorage = () => {
+    const themeColor = localStorage.getItem("theme-color");
+
+    document.body.classList.toggle("light-mode", themeColor === "light_mode");
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+    chatContainer.innerHTML = localStorage.getItem("Chat-History") || defaultText; // Load chat history from local storage or show default text
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+ }
+
+loadDataFromLocalStorage(); // Load chat history from local storage on page load
+
 
 const createElement = (html, className) => {
     const chatDiv = document.createElement("div");
@@ -35,7 +54,7 @@ const requestOptions = {
                 content: userText
             }
         ],
-        max_tokens: 248,
+        max_tokens: 2480,
         temperature: 0.4, // creativity of the response
         top_p: 1.0, // nucleus sampling
         n: 1,
@@ -60,6 +79,8 @@ const requestOptions = {
 
     incomingChatDiv.querySelector(".typing-animation").remove(); // remove the typing animation
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement); // append the response text to the chat details
+     chatContainer.scrollTo(0, chatContainer.scrollHeight); // auto scroll to the bottom of the chat container
+    localStorage.setItem("Chat-History", chatContainer.innerHTML); // save the chat history to local storage
 }
 const copyResponse = (copyBtn) => {
     const responseTextElement = copyBtn.parentElement.querySelector("p");// get the previous sibling element which is the response text
@@ -83,6 +104,7 @@ const showTypingAnimation = () => {
     // create an incoming chat div with the typing animation and append it to the chat container  
     const incomingChatDiv = createElement(html, "incoming");
     chatContainer.appendChild(incomingChatDiv);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight); // auto scroll to the bottom of the chat container
     getChatResponse(incomingChatDiv); // call the function to get the chat response
     
 }
@@ -101,17 +123,50 @@ const handleOutgoingChat = () => {
     // create a new chat div for outgoing message and append it to the chat container            
     const outgoingChatDiv = createElement(html, "outgoing");
     outgoingChatDiv.querySelector("p").textContent = userText;
+    document.querySelector(".default-text")?.remove();
     chatContainer.appendChild(outgoingChatDiv);
+
     //to clear the input field after sending the message
     chatInput.value = "";
+    chatInput.style.height = "55px"; // Reset height after sending
+    chatContainer.scrollTo(0, chatContainer.scrollHeight); // auto scroll to the bottom of the chat container
     setTimeout(showTypingAnimation, 400); // simulate typing animation after .4 second
     
 }
 
-sendButton.addEventListener("click", handleOutgoingChat);
+themeButton.addEventListener("click", () => {
+    // Toggle light mode class on body and change button text accordingly
+    document.body.classList.toggle("light-mode");
+    localStorage.setItem("theme-color", themeButton.innerText);
+    // Update the button text based on the current theme
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+});
+
+
+deleteButton.addEventListener("click", () => {
+    // Clear chat history from local storage and chat container
+    if (confirm("Are you sure you want to delete the chats?")) {
+        localStorage.removeItem("Chat-History");
+        loadDataFromLocalStorage();
+        chatContainer.innerHTML = "";
+        chatContainer.innerHTML = defaultText; // Show default text after deleting
+        chatInput.style.height = "55px"; // Reset height to initial value
+    }
+});
+
+const initialHeight = chatInput.scrollHeight;
+
+chatInput.addEventListener("input", () => {
+    chatInput.style.height = "55px"; // Reset height to initial value
+    chatInput.style.height = `${chatInput.scrollHeight}px`; // Adjust height based on content
+});
+
 chatInput.addEventListener("keydown", function(event) {
     if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault(); // Prevents adding a new line
         handleOutgoingChat();
+        chatInput.style.height = "55px"; // Reset height after sending
     }
 });
+
+sendButton.addEventListener("click", handleOutgoingChat);
