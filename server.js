@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const fetch = require('node-fetch'); // Ensure you have node-fetch installed
+//const fetch = require('node-fetch'); // Ensure you have node-fetch installed
 const cors = require('cors');
 const app = express();
 
@@ -10,9 +10,7 @@ app.use(express.json());
 console.log("API key loaded?", !!process.env.OPENAI_API_KEY);
 
 
-app.get('/api/chat', (req, res) => {
-  res.send("API is working! Send a POST request with JSON to chat with me.");
-});
+
 app.post('/api/chat', async (req, res) => {
   console.log("Received a request at /api/chat");
     console.log("Incoming message:", req.body);
