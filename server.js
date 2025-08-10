@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 console.log("API key loaded?", !!process.env.OPENAI_API_KEY);
-
+const port = process.env.PORT || 3000;
 
 app.get('/api/chat', (req, res) => {
   res.send("API is working! Send a POST request with JSON to chat with me.");
@@ -36,4 +36,4 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(port, () => console.log("Server running on port 3000"));
