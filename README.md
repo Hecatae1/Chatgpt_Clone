@@ -1,3 +1,3 @@
 # Chatgpt_Clone
-An experimental clone of the the notoriously famous open ai chatgpt
-click the Video_proof foldr to watch the demo
+An experimental clone of the the notoriously famous open ai chatgpt</br>
+Go to the Video_proof folder > View raw to watch the demo
