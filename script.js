@@ -7,6 +7,7 @@ const deleteButton = document.querySelector("#delete-btn");
 
 let userText = null;
  // Use environment variable or fallback to a hardcoded key
+let conversationHistory = JSON.parse(localStorage.getItem("conversationHistory")) || [];
 
 const defaultText = `<div class = "default-text">
                             <h1>ChatGPT Clone</h1>
@@ -31,59 +32,45 @@ const createElement = (html, className) => {
     chatDiv.innerHTML = html;
     return chatDiv; 
 }
+const getChatResponse = async (incomingChatDiv) => {
+    const API_URL = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3000/api/chat' 
+        : 'https://chatgpt-clone-trrq.onrender.com/api/chat';
 
-const getChatResponse = async(incomingChatDiv) => {
-    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000/api/chat' : 'https://chatgpt-clone-trrq.onrender.com/api/chat'; 
-// Update with your server URL
     const pElement = document.createElement("p");
 
-
-//define the properties for the request
-const requestOptions = {
-    method: "POST",
-    headers: {
-            "Content-Type": "application/json",
-           
-        },
-    
-    body: JSON.stringify({
-        model: "gpt-4",  // or "gpt-4" / "gpt-4o"
-        messages: [
-            {
-                role: "user",
-                content: userText
-            }
-        ],
-        max_tokens: 2480,
-        temperature: 0.4, // creativity of the response
-        top_p: 1.0, // nucleus sampling
-        n: 1,
-        stop: null
-    })
-
-    }
     try {
-        console.log("Using API_URL:", API_URL);
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo", // or your preferred model
+                messages: conversationHistory // ✅ send the whole history
+            })
+        });
 
-        const response = await fetch(API_URL, requestOptions);
         const data = await response.json();
+        console.log("AI response data:", data);
 
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            pElement.textContent = data.error?.message || "Sorry, something went wrong.";
-        } else {
-            pElement.textContent = data.choices[0].message.content.trim();
-        }
-    } 
-    catch (error) {
-        console.log(error);
+        const aiMessage = data.choices?.[0]?.message?.content || "No response from AI";
+        pElement.textContent = aiMessage;
+
+        // Store AI message in history
+        conversationHistory.push({ role: "assistant", content: aiMessage });
+        localStorage.setItem("conversationHistory", JSON.stringify(conversationHistory));
+
+    } catch (error) {
+        console.error(error);
         pElement.textContent = `Error: ${error.message}`;
     }
 
-    incomingChatDiv.querySelector(".typing-animation").remove(); // remove the typing animation
-    incomingChatDiv.querySelector(".chat-details").appendChild(pElement); // append the response text to the chat details
-     chatContainer.scrollTo(0, chatContainer.scrollHeight); // auto scroll to the bottom of the chat container
-    localStorage.setItem("Chat-History", chatContainer.innerHTML); // save the chat history to local storage
-}
+    incomingChatDiv.querySelector(".typing-animation").remove();
+    incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    localStorage.setItem("Chat-History", chatContainer.innerHTML);
+};
+
+
 const copyResponse = (copyBtn) => {
     const responseTextElement = copyBtn.parentElement.querySelector("p");// get the previous sibling element which is the response text
     navigator.clipboard.writeText(responseTextElement.textContent); // copy the response text to clipboard
@@ -111,30 +98,31 @@ const showTypingAnimation = () => {
     
 }
 
-
 const handleOutgoingChat = () => {
-    userText = chatInput.value.trim(); // get chat input value and trim whitespace
-    if(!userText) return; // return if the userText is empty
-    const html = `<div class = "chat-content">
-                    <div class = "chat-details">
-                        <img src = "https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt = "user-img">
+    userText = chatInput.value.trim();
+    if (!userText) return;
+
+    // Add to conversation history
+    conversationHistory.push({ role: "user", content: userText });
+    localStorage.setItem("conversationHistory", JSON.stringify(conversationHistory));
+
+    const html = `<div class="chat-content">
+                    <div class="chat-details">
+                        <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" alt="user-img">
                         <p></p>
                     </div>
-                </div>`;
-
-    // create a new chat div for outgoing message and append it to the chat container            
+                  </div>`;
     const outgoingChatDiv = createElement(html, "outgoing");
     outgoingChatDiv.querySelector("p").textContent = userText;
     document.querySelector(".default-text")?.remove();
     chatContainer.appendChild(outgoingChatDiv);
 
-    //to clear the input field after sending the message
     chatInput.value = "";
-    chatInput.style.height = "55px"; // Reset height after sending
-    chatContainer.scrollTo(0, chatContainer.scrollHeight); // auto scroll to the bottom of the chat container
-    setTimeout(showTypingAnimation, 400); // simulate typing animation after .4 second
-    
-}
+    chatInput.style.height = "55px";
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    setTimeout(showTypingAnimation, 400);
+};
+
 
 themeButton.addEventListener("click", () => {
     // Toggle light mode class on body and change button text accordingly
