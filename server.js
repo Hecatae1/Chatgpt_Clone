@@ -1,10 +1,12 @@
 require('dotenv').config();
 const express = require('express');
-const fetch = require('node-fetch'); // Ensure you have node-fetch installed
-const cors = require('cors');
+//const fetch = require('node-fetch'); // Ensure you have node-fetch installed
+const cors = require("cors");
 const app = express();
 
-app.use(cors(({origin: 'https://chatgpt-clone-trrq.onrender.com'}))); // Adjust the origin as needed
+app.use(cors({
+  origin: "*" 
+}));
 app.use(express.json());
 const API_KEY = process.env.API_KEY; // Load your API key from environment variables
 console.log("API key loaded?", !!process.env.OPENAI_API_KEY);
